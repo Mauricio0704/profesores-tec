@@ -1,0 +1,10 @@
+{
+  "rules": {
+    "professors": {
+      ".indexOn": ["ratings/overall", "ratings/easiness", ".value"]
+	  },
+    ".indexOn": "professors/ratings/overall",
+    ".read": true,
+    ".write": true
+  }
+}

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Profesores Tec</title>
+
+    <!-- update the version number as needed -->
+    <script defer src="/__/firebase/11.2.0/firebase-app-compat.js"></script>
+    <!-- include only the Firebase features as you need -->
+    <!-- 
+    <script defer src="/__/firebase/11.2.0/firebase-auth-compat.js"></script>
+    <script defer src="/__/firebase/11.2.0/firebase-firestore-compat.js"></script>
+    <script defer src="/__/firebase/11.2.0/firebase-functions-compat.js"></script>
+    <script defer src="/__/firebase/11.2.0/firebase-messaging-compat.js"></script>
+    <script defer src="/__/firebase/11.2.0/firebase-storage-compat.js"></script>
+    <script defer src="/__/firebase/11.2.0/firebase-analytics-compat.js"></script>
+    <script defer src="/__/firebase/11.2.0/firebase-remote-config-compat.js"></script>
+    <script defer src="/__/firebase/11.2.0/firebase-performance-compat.js"></script>
+    -->
+    <script defer src="/__/firebase/11.2.0/firebase-database-compat.js"></script>
+    <!-- 
+      initialize the SDK after all desired features are loaded, set useEmulator to false
+      to avoid connecting the SDK to running emulators.
+    -->
+    <script defer src="/__/firebase/init.js?useEmulator=true"></script>
+    <script type="module" src="./firebase.js"></script>
+    <script src="https://kit.fontawesome.com/a9e59b17b3.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="css/output.css">
+  </head>
+  <body>
+    <div class="flex flex-col py-12 mx-auto box-border w-full pl-8 pr-8 md:max-w-5xl md:m-auto">
+      
+      <div class="flex mb-2">
+        <div class="professor-search-box grow rounded-md bg-gray-100 self-start">
+          <div class="row flex items-center py-2.5 px-5">
+            <input class="flex flex-1 bg-transparent h-12 outline-0 text-lg text-gray-800" type="text" id="professor-input-box" placeholder="Nombre del profesor" autocomplete="off" />
+            <button class="bg-transparent border-0 outline-0"><i class="fa-solid fa-magnifying-glass w-6 text-xl"></i></button>
+          </div>
+          <div id="professor-result-box" class="max-h-72 overflow-y-scroll"></div>
+        </div>
+      </div>
+
+      <div class="flex mb-4">
+        <div class="course-key-search-box w-3xs rounded-md bg-gray-100 self-start">
+          <div class="row flex items-center py-2.5 px-5">
+            <input class="flex flex-1 bg-transparent h-12 outline-0 text-lg text-gray-800" type="text" id="course-key-input-box" placeholder="Clave de la materia" autocomplete="off"/>
+            <button class="bg-transparent border-0 outline-0"><i class="fa-solid fa-magnifying-glass w-6 text-xl"></i></button>
+          </div>
+          <div id="course-key-result-box" class="max-h-72 overflow-y-scroll"></div>
+        </div>
+
+        <div class="course-search-box w-3xs rounded-md bg-gray-100 ml-2 grow self-start">
+          <div class="row flex items-center py-2.5 px-5">
+            <input class="flex flex-1 bg-transparent h-12  outline-0 text-lg text-gray-800" type="text" id="course-input-box" placeholder="Nombre completo de la materia" autocomplete="off"/>
+            <button class="bg-transparent border-0 outline-0"><i class="fa-solid fa-magnifying-glass w-6 text-xl"></i></button>
+          </div>
+          <div id="course-result-box" class="max-h-72 overflow-y-scroll"></div>
+        </div>
+      </div>
+      <div class="flex flex-col" role="main">
+        <div class="rounded-lg flex min-h-14 mb-4" role="tablist">
+          <div id="show-by-best" class="border border-blue-200 rounded-l-lg grow bg-blue-100 flex items-center justify-center text-gray-700 font-semibold hover:cursor-pointer">
+            Mejores
+          </div>
+          
+          <div id="show-by-easiness" class="border border-gray-200 rounded-r-lg grow flex items-center justify-center text-gray-400 hover:cursor-pointer">
+            Fáciles
+          </div>
+        </div>
+
+        <div role="tabpanel">
+          <div id="add-professor" class="hidden">
+            <form class="flex flex-col border border-gray-300" id="reviewForm">
+              <div class="flex">
+                <div class="flex-1 pr-4">
+                  <label>Nombre completo:<input class="bg-gray-200 rounded-sm w-full pl-2" type="text" id="nombre"></label>
+                  
+                  <label for="materiaInput">Buscar Materia:</label>
+                  <div class="flex">
+                    <input class="bg-gray-200" type="text" id="materiaInput" list="materiasList" placeholder="Escribe una materia...">
+                    <datalist id="materiasList"></datalist>
+                    <button class="text-blue-600 font-semibold border-2 rounded-r-md border-blue-200 px-4" type="button" id="add-course">Agregar</button>
+                  </div>
+                  <div class="materia-checkbox" id="materiasSeleccionadas"></div>
+
+                  <label>Reseña (opcional) <textarea class="h-12 w-full bg-gray-200 rounded-sm" id="comentario"></textarea></label>
+                </div>
+                <div class="flex-1 pl-4">
+                  <label>Facilidad: <input class="w-full bg-gray-200 rounded-sm" type="number" id="facilidad"></label>
+                  <label>Enseñanza: <input class="w-full bg-gray-200 rounded-sm" type="number" id="enseñanza"></labe>
+                  <label>Calificación que obtuviste: <input class="w-full bg-gray-200 rounded-sm" type="number" id="calif"></label>
+                </div>
+              </div>
+
+              <div class="flex">
+                <button id="submit-btn" class="bg-blue-600 block mx-auto my-3 px-6 py-2 rounded-xl text-white font-semibold text-sm" type="submit">Enviar</button>
+              </div>
+            </form>
+          </div>
+
+          <ul class="mb-4" id="professors-list"></ul>
+        </div>
+      </div>
+    </div>
+    <script type="module" src="./js/preload.js"></script>
+    <script type="module" src="./js/components/tablist.js"></script>
+    <script type="module" src="./js/components/professorAutocomplete.js"></script>
+    <script type="module" src="./js/components/courseKeyAutocomplete.js"></script>
+    <script type="module" src="./js/components/courseAutocomplete.js"></script>
+    <script type="module" src="./js/features/addCourses.js"></script>
+    <script type="module" src="./js/features/professorsDisplayLogic.js"></script>
+    <script type="module" src="./js/features/addProfessors.js"></script>
+  </body>
+</html>
