@@ -7,8 +7,11 @@ export const sortingProperties = {
   sortedByEasiness: false
 }
 
-const professorsPerPage = 5;
+const professorsPerPage = 10;
 let currentPage = 1;
+
+document.getElementById('next-page').addEventListener('click', function() { loadProfessors(currentPage + 1) });
+document.getElementById('before-page').addEventListener('click', function() { loadProfessors(currentPage - 1) });
 
 export function searchProfessorsByKey(courseKey) {
   professorsListEl.innerHTML = '';
@@ -37,37 +40,25 @@ export async function showProfessorsById(professorsIds, orderedByBest = false, o
     appendProfessor(professorInfo, orderedProfessorsIds[id]);
   }
 
-
-  professorsListEl.innerHTML += `
-    <li>
-      <div class="pr-2 pb-4 pt-6">
-        <div class="flex pr-2 pl-6 text-sm justify-end items-center">
-          <p id="from-to"></p>
-          <button id="before-page" class="hover:cursor-pointer ml-4">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 19.5 8.25 12l7.5-7.5" />
-            </svg>
-          </button>
-          <button id="next-page" class="hover:cursor-pointer ml-2">
-            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-4">
-              <path stroke-linecap="round" stroke-linejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
-            </svg>
-          </button>
-        </div>
-      </div>
-    </li>
-    `
-
   document.querySelectorAll('.show-more').forEach((showMoreBtn) => {
     showMoreBtn.addEventListener('click', function() {
       showMoreOf(showMoreBtn)
     })
   })
 
-  document.getElementById('next-page').addEventListener('click', function() { loadProfessors(currentPage + 1) });
-  document.getElementById('before-page').addEventListener('click', function() { loadProfessors(currentPage - 1) });
   document.getElementById("from-to").innerHTML = `${professorsPerPage*(currentPage-1) + 1} - ${Math.min(numberOfProfessors, professorsPerPage*currentPage)} / ${numberOfProfessors}`;
 }
+
+export async function showOneProfessorById(professorId) {
+  professorsListEl.innerHTML = '';
+  
+  const snapshot = await get(ref(db, 'professors/' + professorId));
+  const professorInfo = snapshot.val();
+  appendProfessor(professorInfo, professorId);
+
+  const showMoreBtn = document.querySelector('.show-more');
+  showMoreOf(showMoreBtn);
+};
 
 
 function appendProfessor(professorInfo, professorId) {
@@ -82,7 +73,7 @@ function appendProfessor(professorInfo, professorId) {
   }
   const professorEl = `
     <li>
-      <div class="pr-16 pb-4 border pt-4 rounded-lg flex justify-between">
+      <div class="pr-16 pb-2 pt-2 border flex justify-between">
         <div class="flex justify-start pr-2 pl-8 items-start">
           <div class="w-16 self-center"><img src="./assets/${professorScaleImage}.png" class="w-12"/></div>
 
@@ -93,19 +84,21 @@ function appendProfessor(professorInfo, professorId) {
             <div class="text-xs overflow-y-hidden max-h-4">${Object.keys(professorInfo.subject).join(', ')}</div>
           </div>
           
-          <div class="flex flex-col items-center px-6 ml-6">
-            <div class="text-sm">${professorInfo.ratings.easiness}</div>
-            <div class="text-xs">Facilidad</div>
-          </div>
-          
-          <div class="flex flex-col items-center px-6">
-            <div class="text-sm">${professorInfo.ratings.teaching}</div>
-            <div class="text-xs">Enseñanza</div>
-          </div>
-          
-          <div class="flex flex-col items-center px-6">
-            <div class="text-sm">${professorInfo.ratings.grading}</div>
-            <div class="text-xs">Calif.alumnos</div>
+          <div class="hidden md:visible md:flex">  
+            <div class="flex flex-col items-center px-6 ml-6">
+              <div class="text-sm">${professorInfo.ratings.easiness}</div>
+              <div class="text-xs">Facilidad</div>
+            </div>
+            
+            <div class="flex flex-col items-center px-6">
+              <div class="text-sm">${professorInfo.ratings.teaching}</div>
+              <div class="text-xs">Enseñanza</div>
+            </div>
+            
+            <div class="flex flex-col items-center px-6">
+              <div class="text-sm">${professorInfo.ratings.grading}</div>
+              <div class="text-xs">Calif.alumnos</div>
+            </div>
           </div>
           
           <div class="flex flex-col items-center px-6 ml-10">

@@ -1,7 +1,8 @@
 import { getProfessors } from "../dbutils.js";
-import { showProfessorsById, loadProfessors } from "../features/professorsDisplayLogic.js";
+import { showProfessorsById, loadProfessors, showOneProfessorById } from "../features/professorsDisplayLogic.js";
 import { removeAccents } from "../utils.js";
 import { professorsListEl, professorResultsBox, professorInputBox } from "../preload.js"
+import { showMoreOf } from "../features/showMoreOfProfessor.js";
 
 const professors = await getProfessors();
 export const addProfessorBox = document.getElementById('add-professor');
@@ -53,7 +54,7 @@ function professorSelectInput(professor) {
   professorResultsBox.innerHTML = '';
 
   const professorId = professor.id;
-  showProfessorsById([professorId]);
+  showOneProfessorById(professorId);
 }
 
 function addProfessor() {

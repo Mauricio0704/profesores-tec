@@ -39,12 +39,12 @@ export function showMoreOf(showMoreBtn) {
 }
 
 function appendRating(ratingsResultsBox, ratingInfo) {
-  const ratingEl = `
+  const ratingEl = `  
     <li>
       <div class="pr-16 pb-2 border border-gray-400 pt-2 rounded-lg flex justify-between">
         <div class="flex justify-start pr-2 pl-8 items-start">
         
-          <div class="flex flex-col items-center max-w-92 min-w-92">
+          <div class="flex flex-col  max-w-92 min-w-92">
             <div class="text-sm">${ratingInfo.comment}</div>
           </div>
 
